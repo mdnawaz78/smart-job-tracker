@@ -1,3 +1,4 @@
+
 """
 Django settings for smart_job_tracker project.
 
@@ -35,10 +36,26 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
-).split(",")
+# Allowed hosts
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "ALLOWED_HOSTS",
+        "127.0.0.1,localhost"
+    ).split(",")
+    if host.strip()
+]
+
+
+# CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        ""
+    ).split(",")
+    if origin.strip()
+]
 
 
 # Application definition
@@ -181,3 +198,4 @@ SECURE_HSTS_SECONDS = int(
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 SECURE_HSTS_PRELOAD = True
+
