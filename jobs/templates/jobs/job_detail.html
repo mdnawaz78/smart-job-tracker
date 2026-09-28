@@ -1,0 +1,554 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}
+{{ job.job_title }} | Smart Job Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+
+<div>
+
+    <h2>
+        {{ job.job_title }}
+    </h2>
+
+    <p class="text-muted mb-0">
+        {{ job.company_name }}
+    </p>
+
+</div>
+
+<a
+    href="{% url 'job_list' %}"
+    class="btn btn-outline-secondary"
+>
+    ← Back to Applications
+</a>
+
+
+</div>
+
+<div class="card shadow-sm">
+
+
+<div class="card-body">
+
+    <div class="row g-4">
+
+
+        <!-- Company -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Company
+            </h6>
+
+            <p class="fs-5">
+                {{ job.company_name }}
+            </p>
+
+        </div>
+
+
+        <!-- Job Title -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Job Title
+            </h6>
+
+            <p class="fs-5">
+                {{ job.job_title }}
+            </p>
+
+        </div>
+
+
+        <!-- Location -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Location
+            </h6>
+
+            <p>
+                {{ job.location|default:"Not specified" }}
+            </p>
+
+        </div>
+
+
+        <!-- Application Date -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Application Date
+            </h6>
+
+            <p>
+                {{ job.application_date|date:"d M Y" }}
+            </p>
+
+        </div>
+
+
+        <!-- Application Deadline -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Application Deadline
+            </h6>
+
+            {% if job.deadline %}
+
+                <p class="mb-0">
+
+                    <strong>
+                        {{ job.deadline|date:"d M Y" }}
+                    </strong>
+
+                </p>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No deadline specified
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Application Status -->
+
+        <div class="col-12">
+
+            <h6 class="text-muted mb-3">
+                Application Status
+            </h6>
+
+
+            <div class="d-flex flex-wrap gap-2">
+
+
+                {% if job.status == "Applied" %}
+
+                    <span class="badge bg-primary fs-6 p-2">
+                        ✓ Applied
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Interview
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Offer
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Accepted
+                    </span>
+
+
+                {% elif job.status == "Interview" %}
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Applied
+                    </span>
+
+                    <span class="badge bg-warning text-dark fs-6 p-2">
+                        ✓ Interview
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Offer
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Accepted
+                    </span>
+
+
+                {% elif job.status == "Offer" %}
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Applied
+                    </span>
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Interview
+                    </span>
+
+                    <span class="badge bg-info text-dark fs-6 p-2">
+                        ✓ Offer
+                    </span>
+
+                    <span class="badge bg-light text-dark border fs-6 p-2">
+                        Accepted
+                    </span>
+
+
+                {% elif job.status == "Accepted" %}
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Applied
+                    </span>
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Interview
+                    </span>
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Offer
+                    </span>
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Accepted
+                    </span>
+
+
+                {% elif job.status == "Rejected" %}
+
+                    <span class="badge bg-success fs-6 p-2">
+                        ✓ Applied
+                    </span>
+
+                    <span class="badge bg-danger fs-6 p-2">
+                        ✕ Rejected
+                    </span>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+
+        <!-- Application Timeline -->
+
+        <div class="col-12">
+
+            <hr class="my-2">
+
+            <h6 class="text-muted mb-4">
+                Application Timeline
+            </h6>
+
+
+            <div class="timeline">
+
+                {% for history in job.status_history.all %}
+
+                    <div class="timeline-item">
+
+
+                        <!-- Timeline Dot -->
+
+                        {% if history.status == "Applied" %}
+
+                            <div class="timeline-dot bg-primary"></div>
+
+                        {% elif history.status == "Interview" %}
+
+                            <div class="timeline-dot bg-warning"></div>
+
+                        {% elif history.status == "Rejected" %}
+
+                            <div class="timeline-dot bg-danger"></div>
+
+                        {% elif history.status == "Offer" %}
+
+                            <div class="timeline-dot bg-info"></div>
+
+                        {% elif history.status == "Accepted" %}
+
+                            <div class="timeline-dot bg-success"></div>
+
+                        {% endif %}
+
+
+                        <!-- Timeline Content -->
+
+                        <div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <strong>
+                                    {{ history.status }}
+                                </strong>
+
+
+                                <small class="text-muted">
+
+                                    {{ history.changed_at|date:"d M Y, h:i A" }}
+
+                                </small>
+
+                            </div>
+
+
+                            {% if history.status == "Applied" %}
+
+                                <small class="text-muted">
+                                    Application submitted
+                                </small>
+
+                            {% elif history.status == "Interview" %}
+
+                                <small class="text-muted">
+                                    Interview stage reached
+                                </small>
+
+                            {% elif history.status == "Offer" %}
+
+                                <small class="text-muted">
+                                    Job offer received
+                                </small>
+
+                            {% elif history.status == "Accepted" %}
+
+                                <small class="text-muted">
+                                    Job offer accepted
+                                </small>
+
+                            {% elif history.status == "Rejected" %}
+
+                                <small class="text-muted">
+                                    Application was rejected
+                                </small>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <p class="text-muted">
+                        No status history available.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Update Status -->
+
+        <div class="col-12">
+
+            <hr class="my-2">
+
+            <h6 class="text-muted mb-3">
+                Update Status
+            </h6>
+
+
+            <form
+                method="POST"
+                action="{% url 'update_status' job.id %}"
+                class="row g-2"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Status Dropdown -->
+
+                <div class="col-md-6">
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option
+                            value="Applied"
+                            {% if job.status == "Applied" %}
+                                selected
+                            {% endif %}
+                        >
+                            Applied
+                        </option>
+
+
+                        <option
+                            value="Interview"
+                            {% if job.status == "Interview" %}
+                                selected
+                            {% endif %}
+                        >
+                            Interview
+                        </option>
+
+
+                        <option
+                            value="Offer"
+                            {% if job.status == "Offer" %}
+                                selected
+                            {% endif %}
+                        >
+                            Offer
+                        </option>
+
+
+                        <option
+                            value="Accepted"
+                            {% if job.status == "Accepted" %}
+                                selected
+                            {% endif %}
+                        >
+                            Accepted
+                        </option>
+
+
+                        <option
+                            value="Rejected"
+                            {% if job.status == "Rejected" %}
+                                selected
+                            {% endif %}
+                        >
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Update Button -->
+
+                <div class="col-md-auto">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Update Status
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Salary -->
+
+        <div class="col-md-6">
+
+            <h6 class="text-muted">
+                Salary
+            </h6>
+
+            <p>
+                {{ job.salary|default:"Not specified" }}
+            </p>
+
+        </div>
+
+
+        <!-- Job URL -->
+
+        <div class="col-12">
+
+            <h6 class="text-muted">
+                Job URL
+            </h6>
+
+            {% if job.job_url %}
+
+                <a
+                    href="{{ job.job_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View Job Posting
+                </a>
+
+            {% else %}
+
+                <p>
+                    Not provided
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Notes -->
+
+        <div class="col-12">
+
+            <h6 class="text-muted">
+                Notes
+            </h6>
+
+            <div class="p-3 bg-light rounded">
+
+                {% if job.notes %}
+
+                    {{ job.notes|linebreaks }}
+
+                {% else %}
+
+                    <span class="text-muted">
+                        No notes added.
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <hr class="my-4">
+
+
+    <!-- Actions -->
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'edit_job' job.id %}"
+            class="btn btn-primary"
+        >
+            Edit Application
+        </a>
+
+
+        <a
+            href="{% url 'delete_job' job.id %}"
+            class="btn btn-outline-danger"
+        >
+            Delete Application
+        </a>
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+{% endblock %}

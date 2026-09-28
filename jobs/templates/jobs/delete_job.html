@@ -1,0 +1,71 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}
+    Delete Job | Smart Job Tracker
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow border-danger">
+
+            <div class="card-body p-4 text-center">
+
+                <h2 class="text-danger mb-3">
+                    Delete Job Application
+                </h2>
+
+                <p class="lead">
+                    Are you sure you want to delete this application?
+                </p>
+
+                <div class="alert alert-light border">
+
+                    <strong>
+                        {{ job.job_title }}
+                    </strong>
+
+                    <br>
+
+                    <span class="text-muted">
+                        {{ job.company_name }}
+                    </span>
+
+                </div>
+
+                <p class="text-muted">
+                    This action cannot be undone.
+                </p>
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger"
+                    >
+                        Yes, Delete
+                    </button>
+
+                    <a
+                        href="{% url 'job_list' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

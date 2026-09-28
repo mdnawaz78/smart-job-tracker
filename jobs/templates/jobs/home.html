@@ -1,0 +1,976 @@
+{% extends "jobs/base.html" %}
+
+{% block title %}Dashboard | Smart Job Tracker{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     DASHBOARD HEADER
+===================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            Dashboard
+        </h2>
+
+        <p class="text-muted mb-0">
+            Welcome back, {{ request.user.username }}!
+            Here's an overview of your job applications.
+        </p>
+    </div>
+
+    <a href="{% url 'add_job' %}" class="btn btn-primary">
+        + Add Job
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     FIRST STATISTICS ROW
+===================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- Total Applications -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Applications
+                        </p>
+
+                        <h3 class="fw-bold mb-0">
+                            {{ total_jobs }}
+                        </h3>
+
+                    </div>
+
+                    <div class="fs-1">
+                        📋
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <a
+                        href="{% url 'job_list' %}"
+                        class="text-decoration-none"
+                    >
+                        View all applications →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Applied -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Applied
+                        </p>
+
+                        <h3 class="fw-bold mb-0">
+                            {{ applied_count }}
+                        </h3>
+
+                    </div>
+
+                    <div class="fs-1">
+                        📝
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <span class="badge bg-primary">
+                        Applications sent
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Interviews -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Interviews
+                        </p>
+
+                        <h3 class="fw-bold mb-0">
+                            {{ interview_count }}
+                        </h3>
+
+                    </div>
+
+                    <div class="fs-1">
+                        🎯
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <span class="badge bg-warning text-dark">
+                        Interview stage
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Offers -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Offers
+                        </p>
+
+                        <h3 class="fw-bold mb-0">
+                            {{ offer_count }}
+                        </h3>
+
+                    </div>
+
+                    <div class="fs-1">
+                        🎁
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <span class="badge bg-info text-dark">
+                        Offers received
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SECOND STATISTICS ROW
+===================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- Accepted -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Accepted
+                </p>
+
+                <h3 class="fw-bold text-success">
+                    {{ accepted_count }}
+                </h3>
+
+                <div class="progress mt-3" style="height: 7px;">
+
+                    <div
+                        class="progress-bar bg-success"
+                        role="progressbar"
+                        aria-valuenow="{{ acceptance_rate }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
+                        {{ acceptance_rate }}%
+                    </div>
+
+                </div>
+
+                <small class="text-muted">
+                    {{ acceptance_rate }}% acceptance rate
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Rejected -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Rejected
+                </p>
+
+                <h3 class="fw-bold text-danger">
+                    {{ rejected_count }}
+                </h3>
+
+                <div class="mt-3">
+
+                    <span class="badge bg-danger">
+                        Keep applying
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Interview Rate -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Interview Rate
+                </p>
+
+                <h3 class="fw-bold">
+                    {{ interview_rate }}%
+                </h3>
+
+                <div class="progress mt-3" style="height: 7px;">
+
+                    <div
+                        class="progress-bar bg-warning"
+                        role="progressbar"
+                        aria-valuenow="{{ interview_rate }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
+                        {{ interview_rate }}%
+                    </div>
+
+                </div>
+
+                <small class="text-muted">
+                    Applications → Interviews
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Offer Rate -->
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="card shadow-sm h-100 border-0">
+
+            <div class="card-body">
+
+                <p class="text-muted mb-1">
+                    Offer Rate
+                </p>
+
+                <h3 class="fw-bold">
+                    {{ offer_rate }}%
+                </h3>
+
+                <div class="progress mt-3" style="height: 7px;">
+
+                    <div
+                        class="progress-bar bg-info"
+                        role="progressbar"
+                        aria-valuenow="{{ offer_rate }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
+                        {{ offer_rate }}%
+                    </div>
+
+                </div>
+
+                <small class="text-muted">
+                    Applications → Offers
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DEADLINE OVERVIEW
+===================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- Upcoming Deadlines -->
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-header bg-white">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0 fw-bold">
+                        Upcoming Deadlines
+                    </h5>
+
+                    <span class="badge bg-primary">
+                        {{ upcoming_deadline_count }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                {% if upcoming_deadlines %}
+
+                    <div class="list-group list-group-flush">
+
+                        {% for job in upcoming_deadlines %}
+
+                            <div class="list-group-item px-0">
+
+                                <div class="d-flex justify-content-between align-items-start">
+
+                                    <div>
+
+                                        <h6 class="mb-1 fw-bold">
+                                            {{ job.company_name }}
+                                        </h6>
+
+                                        <p class="mb-1 text-muted">
+                                            {{ job.job_title }}
+                                        </p>
+
+                                        <small class="text-muted">
+                                            Deadline:
+                                            {{ job.deadline|date:"d M Y" }}
+                                        </small>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        {% if job.deadline_status_class == "danger" %}
+
+                                            <span class="badge bg-danger">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% elif job.deadline_status_class == "warning" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center py-4">
+
+                        <div class="fs-1 mb-2">
+                            📅
+                        </div>
+
+                        <h6>
+                            No upcoming deadlines
+                        </h6>
+
+                        <p class="text-muted mb-0">
+                            You're all caught up!
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Overdue Deadlines -->
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-header bg-white">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <h5 class="mb-0 fw-bold">
+                        Overdue Deadlines
+                    </h5>
+
+                    <span class="badge bg-danger">
+                        {{ overdue_deadline_count }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                {% if overdue_deadlines %}
+
+                    <div class="list-group list-group-flush">
+
+                        {% for job in overdue_deadlines %}
+
+                            <div class="list-group-item px-0">
+
+                                <div class="d-flex justify-content-between align-items-start">
+
+                                    <div>
+
+                                        <h6 class="mb-1 fw-bold">
+                                            {{ job.company_name }}
+                                        </h6>
+
+                                        <p class="mb-1 text-muted">
+                                            {{ job.job_title }}
+                                        </p>
+
+                                        <small class="text-muted">
+                                            Deadline:
+                                            {{ job.deadline|date:"d M Y" }}
+                                        </small>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span class="badge bg-danger">
+                                            {{ job.deadline_status }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="text-center py-4">
+
+                        <div class="fs-1 mb-2">
+                            ✅
+                        </div>
+
+                        <h6>
+                            No overdue applications
+                        </h6>
+
+                        <p class="text-muted mb-0">
+                            Great! You're on schedule.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MONTHLY APPLICATION ANALYTICS
+===================================================== -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0 fw-bold">
+            Monthly Applications
+        </h5>
+
+        <small class="text-muted">
+            Application activity over the last 12 months
+        </small>
+
+    </div>
+
+
+    <div class="card-body">
+
+        {% if monthly_analytics %}
+
+            {% for month in monthly_analytics %}
+
+                <div class="mb-4">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span class="fw-semibold">
+                            {{ month.month_name }}
+                        </span>
+
+                        <span class="text-muted">
+                            {{ month.total }} applications
+                        </span>
+
+                    </div>
+
+
+                    <!-- Application Progress -->
+
+                    <div
+                        class="progress"
+                        style="height: 8px;"
+                    >
+
+                        {% if month.total > 0 %}
+
+                            <div
+                                class="progress-bar bg-primary"
+                                role="progressbar"
+                                aria-valuenow="{{ month.total }}"
+                                aria-valuemin="0"
+                                aria-valuemax="{{ month.total }}"
+                            >
+                            </div>
+
+                        {% else %}
+
+                            <div
+                                class="progress-bar bg-light"
+                                role="progressbar"
+                                aria-valuenow="0"
+                                aria-valuemin="0"
+                                aria-valuemax="1"
+                            >
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Status Breakdown -->
+
+                    <div class="mt-2">
+
+                        <small class="text-muted">
+
+                            Applied:
+                            {{ month.applied }}
+
+                            &nbsp; | &nbsp;
+
+                            Interviews:
+                            {{ month.interview }}
+
+                            &nbsp; | &nbsp;
+
+                            Offers:
+                            {{ month.offer }}
+
+                            &nbsp; | &nbsp;
+
+                            Accepted:
+                            {{ month.accepted }}
+
+                            &nbsp; | &nbsp;
+
+                            Rejected:
+                            {{ month.rejected }}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="text-center py-4">
+
+                <p class="text-muted mb-0">
+                    No monthly application data available.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     RECENT APPLICATIONS
+===================================================== -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-white">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0 fw-bold">
+                Recent Applications
+            </h5>
+
+            <a
+                href="{% url 'job_list' %}"
+                class="btn btn-sm btn-outline-primary"
+            >
+                View All
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        {% if recent_jobs %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Company
+                            </th>
+
+                            <th>
+                                Job Title
+                            </th>
+
+                            <th>
+                                Applied
+                            </th>
+
+                            <th>
+                                Deadline
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for job in recent_jobs %}
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        {{ job.company_name }}
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+                                    {{ job.job_title }}
+                                </td>
+
+
+                                <td>
+                                    {{ job.application_date|date:"d M Y" }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if job.deadline %}
+
+                                        <div class="mb-1">
+                                            {{ job.deadline|date:"d M Y" }}
+                                        </div>
+
+
+                                        {% if job.deadline_status_class == "danger" %}
+
+                                            <span class="badge bg-danger">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% elif job.deadline_status_class == "warning" %}
+
+                                            <span class="badge bg-warning text-dark">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+                                                {{ job.deadline_status }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No deadline
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if job.status == "Applied" %}
+
+                                        <span class="badge bg-primary">
+                                            Applied
+                                        </span>
+
+                                    {% elif job.status == "Interview" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Interview
+                                        </span>
+
+                                    {% elif job.status == "Rejected" %}
+
+                                        <span class="badge bg-danger">
+                                            Rejected
+                                        </span>
+
+                                    {% elif job.status == "Offer" %}
+
+                                        <span class="badge bg-info text-dark">
+                                            Offer
+                                        </span>
+
+                                    {% elif job.status == "Accepted" %}
+
+                                        <span class="badge bg-success">
+                                            Accepted
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'job_detail' job.id %}"
+                                        class="btn btn-sm btn-outline-secondary"
+                                    >
+                                        View
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <div class="fs-1 mb-3">
+                    📋
+                </div>
+
+                <h5>
+                    No applications yet
+                </h5>
+
+                <p class="text-muted">
+                    Start tracking your job applications.
+                </p>
+
+                <a
+                    href="{% url 'add_job' %}"
+                    class="btn btn-primary"
+                >
+                    + Add Your First Job
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     QUICK ACTIONS
+===================================================== -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+        <h5 class="fw-bold mb-3">
+            Quick Actions
+        </h5>
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a
+                href="{% url 'add_job' %}"
+                class="btn btn-primary"
+            >
+                + Add Job
+            </a>
+
+            <a
+                href="{% url 'job_list' %}"
+                class="btn btn-outline-primary"
+            >
+                View Applications
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
